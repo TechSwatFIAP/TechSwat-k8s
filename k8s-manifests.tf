@@ -206,3 +206,20 @@ spec:
           averageUtilization: 80
 YAML
 }
+
+# -----------------------------------------------------------------------------
+# Data source para obter o hostname do LoadBalancer
+# -----------------------------------------------------------------------------
+
+resource "time_sleep" "wait_for_lb" {
+  depends_on      = [kubectl_manifest.service]
+  create_duration = "60s"
+}
+
+data "kubernetes_service_v1" "techswat_lb" {
+  depends_on = [time_sleep.wait_for_lb]
+  metadata {
+    name      = "svc-techswat"
+    namespace = "nstechswat"
+  }
+}

@@ -32,3 +32,8 @@ output "service_name" {
   description = "Nome do serviço TechSwat"
   value       = "svc-techswat"
 }
+
+output "load_balancer_hostname" {
+  description = "Hostname do LoadBalancer do serviço TechSwat"
+  value       = try(data.kubernetes_service_v1.techswat_lb.status[0].load_balancer[0].ingress[0].hostname, "aguardando...")
+}

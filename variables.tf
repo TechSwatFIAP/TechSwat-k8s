@@ -91,3 +91,61 @@ variable "tags" {
     Environment = "Development"
   }
 }
+
+# -----------------------------------------------------------------------------
+# TechSwat-Order-Service (opcional)
+# -----------------------------------------------------------------------------
+
+variable "enable_order_service" {
+  description = "Quando true, aplica Deployment/Service/ConfigMap do TechSwat-Order-Service no mesmo namespace"
+  type        = bool
+  default     = false
+}
+
+variable "techswat_order_image" {
+  description = "Imagem Docker do TechSwat-Order-Service"
+  type        = string
+  default     = "bagatim/techswat-order-service:latest"
+}
+
+variable "mysql_order_db_name" {
+  description = "Nome do banco MySQL dedicado ao microserviço de ordens (deve existir no RDS)"
+  type        = string
+  default     = "techswat_os_db"
+}
+
+variable "order_messaging_transport" {
+  description = "Transporte de mensagens do pod: off | rabbit (RabbitMQ em todos os ambientes)"
+  type        = string
+  default     = "rabbit"
+}
+
+variable "internal_order_api_key" {
+  description = "Chave X-Internal-Api-Key compartilhada entre TechSwat e order-service (bridge HTTP)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "order_rabbitmq_host" {
+  description = "Host RabbitMQ usado pelo pod (se transport=rabbit)"
+  type        = string
+  default     = "localhost"
+}
+
+variable "order_rabbitmq_port" {
+  description = "Porta RabbitMQ para o pod"
+  type        = string
+  default     = "5672"
+}
+
+variable "order_rabbitmq_username" {
+  type    = string
+  default = "guest"
+}
+
+variable "order_rabbitmq_password" {
+  type      = string
+  default   = "guest"
+  sensitive = true
+}

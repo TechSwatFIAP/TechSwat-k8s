@@ -54,6 +54,7 @@ stringData:
   MYSQL_PASSWORD: ${var.mysql_root_password}
   REDIS_PASSWORD: ${var.redis_password}
   JWT_SECRET: "${var.jwt_secret}"
+  INTERNAL_API_KEY: ${var.internal_order_api_key}
 YAML
 }
 
@@ -139,6 +140,16 @@ spec:
                 secretKeyRef:
                   name: secrets-techswat
                   key: JWT_SECRET
+            - name: INTERNAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets-techswat
+                  key: INTERNAL_API_KEY
+            - name: ORDER_SERVICE_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-techswat
+                  key: ORDER_SERVICE_BASE_URL
           resources:
             requests:
               cpu: "100m"

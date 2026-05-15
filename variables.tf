@@ -91,3 +91,20 @@ variable "tags" {
     Environment = "Development"
   }
 }
+
+variable "payment_service_image" {
+  description = "Imagem Docker do microsserviço Payment-Service"
+  type        = string
+}
+
+variable "mp_access_token" {
+  description = "Access token do Mercado Pago (consumido pelo Payment-Service)"
+  type        = string
+  sensitive   = true
+}
+
+variable "mp_webhook_shared_secret" {
+  description = "Shared secret para validar webhooks do Mercado Pago"
+  type        = string
+  sensitive   = true
+}

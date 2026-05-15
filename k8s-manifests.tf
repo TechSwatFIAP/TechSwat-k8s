@@ -54,6 +54,8 @@ stringData:
   MYSQL_PASSWORD: ${var.mysql_root_password}
   REDIS_PASSWORD: ${var.redis_password}
   JWT_SECRET: "${var.jwt_secret}"
+  MP_ACCESS_TOKEN: "${var.mp_access_token}"
+  MP_WEBHOOK_SHARED_SECRET: "${var.mp_webhook_shared_secret}"
 YAML
 }
 
@@ -222,4 +224,78 @@ data "kubernetes_service_v1" "techswat_lb" {
     name      = "svc-techswat"
     namespace = "nstechswat"
   }
+}
+
+# -----------------------------------------------------------------------------
+# Payment-Service: Deployment
+# -----------------------------------------------------------------------------
+
+resource "kubectl_manifest" "deploy_payment" {
+  depends_on       = [kubectl_manifest.secrets_techswat]
+  wait_for_rollout = false
+  yaml_body        = <<YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-payment
+  namespace: nstechswat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: ${var.payment_service_image}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PAYMENTS_PROVIDERS_MERCADOPAGO_SANDBOX
+              value: "false"
+            - name: PAYMENTS_PROVIDERS_MERCADOPAGO_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: secrets-techswat
+                  key: MP_ACCESS_TOKEN
+            - name: PAYMENTS_WEBHOOKS_MERCADOPAGO_SHARED_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secrets-techswat
+                  key: MP_WEBHOOK_SHARED_SECRET
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+YAML
+}
+
+# -----------------------------------------------------------------------------
+# Payment-Service: Service (ClusterIP interno)
+# -----------------------------------------------------------------------------
+
+resource "kubectl_manifest" "svc_payment" {
+  depends_on = [kubectl_manifest.deploy_payment]
+  yaml_body  = <<YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-payment
+  namespace: nstechswat
+spec:
+  selector:
+    app: payment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+YAML
 }

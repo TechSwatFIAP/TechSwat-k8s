@@ -37,3 +37,8 @@ output "load_balancer_hostname" {
   description = "Hostname do LoadBalancer do serviço TechSwat"
   value       = try(data.kubernetes_service_v1.techswat_lb.status[0].load_balancer[0].ingress[0].hostname, "aguardando...")
 }
+
+output "payment_service_load_balancer_hostname" {
+  description = "Hostname do LoadBalancer do payment-service (URL pública do webhook MercadoPago)"
+  value       = var.enable_payment_service ? try(data.kubernetes_service_v1.payment_lb[0].status[0].load_balancer[0].ingress[0].hostname, "aguardando...") : "disabled"
+}

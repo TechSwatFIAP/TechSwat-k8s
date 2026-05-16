@@ -95,6 +95,7 @@ variable "tags" {
 variable "payment_service_image" {
   description = "Imagem Docker do microsserviço Payment-Service"
   type        = string
+  default     = "bagatim/techswat-payment:latest"
 }
 
 variable "mp_access_token" {

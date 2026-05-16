@@ -149,3 +149,103 @@ variable "order_rabbitmq_password" {
   default   = "guest"
   sensitive = true
 }
+
+# -----------------------------------------------------------------------------
+# TechSwat-Payment-Service (opcional)
+# -----------------------------------------------------------------------------
+
+variable "enable_payment_service" {
+  description = "Quando true, aplica MongoDB StatefulSet + Deployment/Service do payment-service no mesmo namespace"
+  type        = bool
+  default     = false
+}
+
+variable "techswat_payment_image" {
+  description = "Imagem Docker do TechSwat-Payment-Service"
+  type        = string
+  default     = "bagatim/techswat-payment-service:latest"
+}
+
+variable "payment_mongo_db_name" {
+  description = "Nome do banco MongoDB dedicado ao payment-service"
+  type        = string
+  default     = "techswat_payment_db"
+}
+
+variable "payment_mongo_username" {
+  description = "Usuário root do MongoDB do payment"
+  type        = string
+  default     = "techswat_payment"
+}
+
+variable "payment_mongo_password" {
+  description = "Senha root do MongoDB do payment"
+  type        = string
+  default     = "techswat_payment_pwd"
+  sensitive   = true
+}
+
+variable "payment_mongo_storage_size" {
+  description = "Tamanho do PVC do MongoDB do payment"
+  type        = string
+  default     = "5Gi"
+}
+
+variable "payment_mp_access_token" {
+  description = "Access token MercadoPago para o payment-service"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "payment_mp_webhook_secret" {
+  description = "Shared secret do webhook MercadoPago"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "payment_mp_sandbox" {
+  description = "Quando true, força o cliente MercadoPago em modo sandbox"
+  type        = bool
+  default     = true
+}
+
+variable "payment_aws_region" {
+  description = "Região AWS para o SQS do payment-service"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "payment_sqs_outbound_queue_url" {
+  description = "URL da fila SQS de eventos de saída do payment (payments-events)"
+  type        = string
+  default     = ""
+}
+
+variable "payment_sqs_inbound_queue_url" {
+  description = "URL da fila SQS de comandos de entrada do payment (payments-commands)"
+  type        = string
+  default     = ""
+}
+
+variable "payment_aws_access_key_id" {
+  description = "AWS_ACCESS_KEY_ID injetado no pod (Academy short-lived). Use IRSA em produção."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "payment_aws_secret_access_key" {
+  description = "AWS_SECRET_ACCESS_KEY injetado no pod (Academy)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "payment_aws_session_token" {
+  description = "AWS_SESSION_TOKEN injetado no pod (Academy expira em ~4h)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}

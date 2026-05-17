@@ -27,7 +27,10 @@ Todo o ciclo de deploy e controlado pelo repositorio principal: [TechSwat](https
 - EKS Cluster (`eks-techswat-terraform`, Kubernetes 1.31)
 - Node Group: 1 node `t3.micro`
 - Namespace `nstechswat` com Deployment, Service (LoadBalancer) e HPA (1-3 pods)
-- **Opcional** (`enable_order_service = true`): ConfigMap/Secret/Deployment/Service **ClusterIP** do **TechSwat-Order-Service** (imagem `techswat_order_image`, banco `mysql_order_db_name`, mensageria `order_messaging_transport`, `TECHSWAT_BASE_URL` para o bridge HTTP), sem alterar os recursos existentes quando o flag permanece `false` (padrão).
+- **Opcional** (`enable_order_service = true`): **TechSwat-Order-Service** + RabbitMQ (`svc-rabbitmq`) + job `techswat_os_db`.
+- **Opcional** (`enable_stock_service = true`, padrão): **TechSwat-Stock-Service** (`DB_HOST`/`DB_PORT`, porta `8083`, mesmo RabbitMQ) + job `stock_db`.
+- **Opcional** (`enable_payment_service = true`, padrão): **TechSwat-Payment-Service** (`svc-techswat-payment`, MongoDB `svc-payment-mongo`, mesmo RabbitMQ).
+- Flags repassados pelo Terraform do repositório **TechSwat** (`infra/terraform/terraform.tfvars`).
 
 ## Deploy
 

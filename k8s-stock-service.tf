@@ -12,13 +12,14 @@ metadata:
   name: configmap-techswat-stock
   namespace: nstechswat
 data:
-  SPRING_DATASOURCE_URL: jdbc:mysql://${var.mysql_endpoint}:${var.mysql_port}/${var.mysql_stock_db_name}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
-  SPRING_DATASOURCE_USERNAME: root
+  DB_HOST: ${var.mysql_endpoint}
+  DB_PORT: "${var.mysql_port}"
+  DB_USERNAME: root
   MESSAGING_TRANSPORT: rabbit
   SPRING_RABBITMQ_HOST: ${var.order_rabbitmq_host}
   SPRING_RABBITMQ_PORT: "${var.order_rabbitmq_port}"
   SPRING_RABBITMQ_USERNAME: ${var.order_rabbitmq_username}
-  SERVER_PORT: "8080"
+  SERVER_PORT: "8083"
 YAML
 }
 
@@ -33,7 +34,7 @@ metadata:
   namespace: nstechswat
 type: Opaque
 stringData:
-  SPRING_DATASOURCE_PASSWORD: ${var.mysql_root_password}
+  DB_PASSWORD: ${var.mysql_root_password}
   SPRING_RABBITMQ_PASSWORD: ${var.order_rabbitmq_password}
 YAML
 }
@@ -62,16 +63,16 @@ spec:
         - name: techswat-stock
           image: ${var.techswat_stock_image}
           ports:
-            - containerPort: 8080
+            - containerPort: 8083
           envFrom:
             - configMapRef:
                 name: configmap-techswat-stock
           env:
-            - name: SPRING_DATASOURCE_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secrets-techswat-stock
-                  key: SPRING_DATASOURCE_PASSWORD
+                  key: DB_PASSWORD
             - name: SPRING_RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -80,13 +81,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: 8083
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: 8083
             initialDelaySeconds: 60
             periodSeconds: 15
           resources:
@@ -114,7 +115,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 8083
   type: ClusterIP
 YAML
 }

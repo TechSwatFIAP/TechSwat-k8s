@@ -80,6 +80,8 @@ data:
   SPRING_DATASOURCE_URL: jdbc:mysql://${var.mysql_endpoint}:${var.mysql_port}/${var.mysql_db_name}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
   SPRING_DATASOURCE_USERNAME: root
   SERVER_SERVLET_CONTEXT_PATH: /
+  ORDER_SERVICE_BASE_URL: http://svc-techswat-order
+  STOCK_SERVICE_BASE_URL: http://svc-techswat-stock
 YAML
 }
 
@@ -150,6 +152,11 @@ spec:
                 configMapKeyRef:
                   name: configmap-techswat
                   key: ORDER_SERVICE_BASE_URL
+            - name: STOCK_SERVICE_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-techswat
+                  key: STOCK_SERVICE_BASE_URL
           resources:
             requests:
               cpu: "100m"

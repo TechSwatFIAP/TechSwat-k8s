@@ -171,3 +171,31 @@ variable "mysql_stock_db_name" {
   type        = string
   default     = "stock_db"
 }
+
+# -----------------------------------------------------------------------------
+# TechSwat-Payment-Service (opcional)
+# -----------------------------------------------------------------------------
+
+variable "enable_payment_service" {
+  description = "Quando true, aplica Deployment/Service do Payment-Service e MongoDB no mesmo namespace"
+  type        = bool
+  default     = true
+}
+
+variable "techswat_payment_image" {
+  description = "Imagem Docker do TechSwat-Payment-Service"
+  type        = string
+  default     = "bagatim/techswat-payment-service:latest"
+}
+
+variable "payment_mongodb_database" {
+  description = "Nome do banco MongoDB usado pelo Payment-Service"
+  type        = string
+  default     = "payment_db"
+}
+
+variable "payment_mercadopago_stub_enabled" {
+  description = "Ativa adapters stub do Mercado Pago (dev/demo no cluster)"
+  type        = bool
+  default     = false
+}

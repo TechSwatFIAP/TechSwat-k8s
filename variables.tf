@@ -149,3 +149,25 @@ variable "order_rabbitmq_password" {
   default   = "guest"
   sensitive = true
 }
+
+# -----------------------------------------------------------------------------
+# TechSwat-Stock-Service (opcional)
+# -----------------------------------------------------------------------------
+
+variable "enable_stock_service" {
+  description = "Quando true, aplica Deployment/Service/ConfigMap do TechSwat-Stock-Service no mesmo namespace"
+  type        = bool
+  default     = true
+}
+
+variable "techswat_stock_image" {
+  description = "Imagem Docker do TechSwat-Stock-Service"
+  type        = string
+  default     = "bagatim/techswat-stock-service:latest"
+}
+
+variable "mysql_stock_db_name" {
+  description = "Nome do banco MySQL dedicado ao microserviço de estoque (deve existir no RDS)"
+  type        = string
+  default     = "stock_db"
+}

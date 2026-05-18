@@ -94,6 +94,7 @@ spec:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
+        storageClassName: gp2
         resources:
           requests:
             storage: ${var.payment_mongo_storage_size}

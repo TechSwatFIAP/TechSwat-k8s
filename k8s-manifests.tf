@@ -54,7 +54,7 @@ stringData:
   MYSQL_PASSWORD: ${var.mysql_root_password}
   REDIS_PASSWORD: ${var.redis_password}
   JWT_SECRET: "${var.jwt_secret}"
-  INTERNAL_API_KEY: ${var.internal_order_api_key}
+  INTERNAL_API_KEY: "${var.internal_order_api_key}"
 YAML
 }
 

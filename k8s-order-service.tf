@@ -35,7 +35,7 @@ metadata:
 type: Opaque
 stringData:
   SPRING_DATASOURCE_PASSWORD: ${var.mysql_root_password}
-  INTERNAL_API_KEY: ${var.internal_order_api_key}
+  INTERNAL_API_KEY: "${var.internal_order_api_key}"
 YAML
 }
 

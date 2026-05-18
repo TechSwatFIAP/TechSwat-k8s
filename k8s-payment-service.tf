@@ -101,7 +101,7 @@ YAML
 }
 
 # -----------------------------------------------------------------------------
-# Secret — credenciais de provider, AWS SQS e Mongo
+# Secret — credenciais MercadoPago, Mongo e RabbitMQ
 # -----------------------------------------------------------------------------
 
 resource "kubectl_manifest" "secrets_techswat_payment" {
@@ -120,9 +120,8 @@ stringData:
   SPRING_DATA_MONGODB_URI: mongodb://${var.payment_mongo_username}:${var.payment_mongo_password}@svc-mongo-payment.nstechswat.svc.cluster.local:27017/${var.payment_mongo_db_name}?authSource=admin
   PAYMENTS_PROVIDERS_MERCADOPAGO_ACCESS_TOKEN: ${var.payment_mp_access_token}
   PAYMENTS_WEBHOOKS_MERCADOPAGO_SHARED_SECRET: ${var.payment_mp_webhook_secret}
-  AWS_ACCESS_KEY_ID: ${var.payment_aws_access_key_id}
-  AWS_SECRET_ACCESS_KEY: ${var.payment_aws_secret_access_key}
-  AWS_SESSION_TOKEN: ${var.payment_aws_session_token}
+  SPRING_RABBITMQ_USERNAME: ${var.payment_rabbitmq_username}
+  SPRING_RABBITMQ_PASSWORD: ${var.payment_rabbitmq_password}
 YAML
 }
 
@@ -146,11 +145,9 @@ data:
   PAYMENTS_PROVIDERS_MERCADOPAGO_SANDBOX: "${var.payment_mp_sandbox}"
   PAYMENTS_WEBHOOKS_MERCADOPAGO_SIGNATURE_REQUIRED: "true"
   PAYMENTS_API_CREATE_HTTP_ENABLED: "true"
-  PAYMENTS_BROKER_TRANSPORT: sqs
-  PAYMENTS_BROKER_SQS_REGION: ${var.payment_aws_region}
-  PAYMENTS_BROKER_SQS_QUEUE_URL: ${var.payment_sqs_outbound_queue_url}
-  PAYMENTS_BROKER_SQS_INBOUND_ENABLED: "true"
-  PAYMENTS_BROKER_SQS_INBOUND_QUEUE_URL: ${var.payment_sqs_inbound_queue_url}
+  MESSAGING_TRANSPORT: ${var.payment_messaging_transport}
+  SPRING_RABBITMQ_HOST: ${var.payment_rabbitmq_host}
+  SPRING_RABBITMQ_PORT: "${var.payment_rabbitmq_port}"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics
 YAML
 }
@@ -165,6 +162,7 @@ resource "kubectl_manifest" "deploy_techswat_payment" {
     kubectl_manifest.configmap_techswat_payment,
     kubectl_manifest.secrets_techswat_payment,
     kubectl_manifest.mongo_payment_statefulset,
+    kubectl_manifest.rabbitmq_service,
   ]
   wait_for_rollout = false
   yaml_body        = <<-YAML

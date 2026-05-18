@@ -128,26 +128,26 @@ variable "internal_order_api_key" {
 }
 
 variable "order_rabbitmq_host" {
-  description = "Host RabbitMQ usado pelo pod (se transport=rabbit)"
+  description = "Host RabbitMQ usado pelo pod (se transport=rabbit). Default = svc-rabbitmq do cluster (compartilhado com payment-service)."
   type        = string
-  default     = "localhost"
+  default     = "svc-rabbitmq"
+}
+
+variable "order_rabbitmq_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "order_rabbitmq_password" {
+  type      = string
+  default   = "admin"
+  sensitive = true
 }
 
 variable "order_rabbitmq_port" {
   description = "Porta RabbitMQ para o pod"
   type        = string
   default     = "5672"
-}
-
-variable "order_rabbitmq_username" {
-  type    = string
-  default = "guest"
-}
-
-variable "order_rabbitmq_password" {
-  type      = string
-  default   = "guest"
-  sensitive = true
 }
 
 # -----------------------------------------------------------------------------
@@ -211,41 +211,62 @@ variable "payment_mp_sandbox" {
   default     = true
 }
 
-variable "payment_aws_region" {
-  description = "Região AWS para o SQS do payment-service"
+variable "payment_messaging_transport" {
+  description = "Transporte de mensagens do payment-service: off | rabbit"
   type        = string
-  default     = "us-east-1"
+  default     = "rabbit"
 }
 
-variable "payment_sqs_outbound_queue_url" {
-  description = "URL da fila SQS de eventos de saída do payment (payments-events)"
+variable "payment_rabbitmq_host" {
+  description = "Host RabbitMQ usado pelo payment-service (default = svc-rabbitmq do cluster)"
   type        = string
-  default     = ""
+  default     = "svc-rabbitmq"
 }
 
-variable "payment_sqs_inbound_queue_url" {
-  description = "URL da fila SQS de comandos de entrada do payment (payments-commands)"
+variable "payment_rabbitmq_port" {
+  description = "Porta AMQP do RabbitMQ usado pelo payment-service"
   type        = string
-  default     = ""
+  default     = "5672"
 }
 
-variable "payment_aws_access_key_id" {
-  description = "AWS_ACCESS_KEY_ID injetado no pod (Academy short-lived). Use IRSA em produção."
+variable "payment_rabbitmq_username" {
+  description = "Usuário RabbitMQ do payment-service"
   type        = string
-  default     = ""
+  default     = "admin"
+}
+
+variable "payment_rabbitmq_password" {
+  description = "Senha RabbitMQ do payment-service"
+  type        = string
+  default     = "admin"
   sensitive   = true
 }
 
-variable "payment_aws_secret_access_key" {
-  description = "AWS_SECRET_ACCESS_KEY injetado no pod (Academy)"
+# -----------------------------------------------------------------------------
+# RabbitMQ in-cluster (compartilhado por Order e Payment)
+# -----------------------------------------------------------------------------
+
+variable "enable_rabbitmq" {
+  description = "Quando true, provisiona StatefulSet + Service do RabbitMQ no namespace nstechswat"
+  type        = bool
+  default     = false
+}
+
+variable "rabbitmq_username" {
+  description = "Usuário default do broker RabbitMQ in-cluster"
   type        = string
-  default     = ""
+  default     = "admin"
+}
+
+variable "rabbitmq_password" {
+  description = "Senha default do broker RabbitMQ in-cluster"
+  type        = string
+  default     = "admin"
   sensitive   = true
 }
 
-variable "payment_aws_session_token" {
-  description = "AWS_SESSION_TOKEN injetado no pod (Academy expira em ~4h)"
+variable "rabbitmq_storage_size" {
+  description = "Tamanho do PVC EBS do RabbitMQ"
   type        = string
-  default     = ""
-  sensitive   = true
+  default     = "2Gi"
 }
